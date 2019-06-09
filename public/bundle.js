@@ -307,7 +307,7 @@ var app = (function () {
 
     const file = "src\\PhotoBackground.svelte";
 
-    // (108:0) {:else}
+    // (109:0) {:else}
     function create_else_block(ctx) {
     	var h1, t_1, button, dispose;
 
@@ -318,8 +318,8 @@ var app = (function () {
     			t_1 = space();
     			button = element("button");
     			button.textContent = "authorize and load";
-    			add_location(h1, file, 108, 1, 2936);
-    			add_location(button, file, 109, 1, 2973);
+    			add_location(h1, file, 109, 1, 3028);
+    			add_location(button, file, 110, 1, 3065);
     			dispose = listen(button, "click", ctx.click_handler);
     		},
 
@@ -341,7 +341,7 @@ var app = (function () {
     	};
     }
 
-    // (106:0) {#if googlePhotosClientLoaded}
+    // (107:0) {#if googlePhotosClientLoaded}
     function create_if_block(ctx) {
     	return {
     		c: noop,
@@ -366,7 +366,7 @@ var app = (function () {
     			div = element("div");
     			if_block.c();
     			div.className = "content svelte-1p2f574";
-    			add_location(div, file, 104, 0, 2786);
+    			add_location(div, file, 105, 0, 2878);
     			dispose = listen(div, "click", ctx.displayRandomPhoto);
     		},
 
@@ -412,7 +412,8 @@ var app = (function () {
     	if (authInstance.isSignedIn.get()) {
     		console.log("User already signed in.");
     	} else {
-    		authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata"})
+    		//authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata"})
+    		authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary.readonly"})
     		.then(function() { console.log("Sign-in successful"); },
     			function(err) { console.error("Error signing in", err); });
     	}

@@ -11,7 +11,8 @@
 		if (authInstance.isSignedIn.get()) {
 			console.log("User already signed in.");
 		} else {
-			authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata"})
+			//authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata"})
+			authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary.readonly"})
 			.then(function() { console.log("Sign-in successful"); },
 				function(err) { console.error("Error signing in", err); });
 		}
