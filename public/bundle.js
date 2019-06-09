@@ -307,7 +307,7 @@ var app = (function () {
 
     const file = "src\\PhotoBackground.svelte";
 
-    // (109:0) {:else}
+    // (124:0) {:else}
     function create_else_block(ctx) {
     	var h1, t_1, button, dispose;
 
@@ -318,8 +318,8 @@ var app = (function () {
     			t_1 = space();
     			button = element("button");
     			button.textContent = "authorize and load";
-    			add_location(h1, file, 109, 1, 3028);
-    			add_location(button, file, 110, 1, 3065);
+    			add_location(h1, file, 124, 1, 3473);
+    			add_location(button, file, 125, 1, 3510);
     			dispose = listen(button, "click", ctx.click_handler);
     		},
 
@@ -341,7 +341,7 @@ var app = (function () {
     	};
     }
 
-    // (107:0) {#if googlePhotosClientLoaded}
+    // (122:0) {#if googlePhotosClientLoaded}
     function create_if_block(ctx) {
     	return {
     		c: noop,
@@ -366,7 +366,7 @@ var app = (function () {
     			div = element("div");
     			if_block.c();
     			div.className = "content svelte-1p2f574";
-    			add_location(div, file, 105, 0, 2878);
+    			add_location(div, file, 120, 0, 3323);
     			dispose = listen(div, "click", ctx.displayRandomPhoto);
     		},
 
@@ -453,9 +453,23 @@ var app = (function () {
 
     	function displayRandomPhoto() {
     		const randomPhotoIndex = Math.round(Math.random() * $photos.length);
-    		changeBackgroundImage(`${$photos[randomPhotoIndex].baseUrl}=w0-h0`);
-    		schedule_getPictures();
-    	}
+
+    		return gapi.client.photoslibrary.mediaItems.get({
+          		"mediaItemId": $photos[randomPhotoIndex],
+        	})
+            .then(
+    			function(response) {
+    				// Handle the results here (response.result has the parsed body).
+    				console.log("Getting photo URL", response);
+    				changeBackgroundImage(`${response.result.baseUrl}=w0-h0`);
+    				schedule_getPictures();
+    			},
+    			function(err) {
+    				console.error("Execute error", err); 
+    				schedule_getPictures();
+    			}
+    		);
+     	}
 
 
     	let pageToken = '';
@@ -468,17 +482,18 @@ var app = (function () {
     	function getPictures() {
     		return gapi.client.photoslibrary.mediaItems.search({
     		"resource": {
-    			"pageSize": 25,
+    			"pageSize": 100,
     			pageToken
     		}
     		})
     			.then(function(response) {
     					// Handle the results here (response.result has the parsed body).
-    					console.log("Response", response);
+    					console.log("Increasing photos cache", response);
     					const { result } = response;
 
+    					const newPhotoIds = result.mediaItems.map(item => item.id);
     					photos.update(n => {
-    						return Array.from(new Set([...n, ...result.mediaItems]));
+    						return Array.from(new Set([...n, ...newPhotoIds]));
     					});
 
     					pageToken = result.nextPageToken;
@@ -505,7 +520,7 @@ var app = (function () {
 
     	$$self.$$.update = ($$dirty = { $photos: 1 }) => {
     		if ($$dirty.$photos) { {
-    				console.log($photos);
+    				console.log({$photos});
     			} }
     	};
 

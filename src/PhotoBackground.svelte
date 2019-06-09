@@ -45,9 +45,23 @@
 
 	function displayRandomPhoto() {
 		const randomPhotoIndex = Math.round(Math.random() * $photos.length);
-		changeBackgroundImage(`${$photos[randomPhotoIndex].baseUrl}=w0-h0`);
-		schedule_getPictures();
-	}
+
+		return gapi.client.photoslibrary.mediaItems.get({
+      		"mediaItemId": $photos[randomPhotoIndex],
+    	})
+        .then(
+			function(response) {
+				// Handle the results here (response.result has the parsed body).
+				console.log("Getting photo URL", response);
+				changeBackgroundImage(`${response.result.baseUrl}=w0-h0`);
+				schedule_getPictures();
+			},
+			function(err) {
+				console.error("Execute error", err); 
+				schedule_getPictures();
+			}
+		);
+ 	}
 
 
 	let pageToken = '';
@@ -60,17 +74,18 @@
 	function getPictures() {
 		return gapi.client.photoslibrary.mediaItems.search({
 		"resource": {
-			"pageSize": 25,
+			"pageSize": 100,
 			pageToken
 		}
 		})
 			.then(function(response) {
 					// Handle the results here (response.result has the parsed body).
-					console.log("Response", response);
+					console.log("Increasing photos cache", response);
 					const { result } = response;
 
+					const newPhotoIds = result.mediaItems.map(item => item.id);
 					photos.update(n => {
-						return Array.from(new Set([...n, ...result.mediaItems]));
+						return Array.from(new Set([...n, ...newPhotoIds]));
 					});
 
 					pageToken = result.nextPageToken;
@@ -92,7 +107,7 @@
 	});
 	
 	$: {
-		console.log($photos);
+		console.log({$photos});
 	}
 </script>
 
