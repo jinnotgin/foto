@@ -42,16 +42,21 @@
 		img.src = imgUrl;
 	}
 
-	let getPictures_timeout;
+	function displayRandomPhoto() {
+		const randomPhotoIndex = Math.round(Math.random() * $photos.length);
+		changeBackgroundImage(`${$photos[randomPhotoIndex].baseUrl}=w0-h0`);
+		schedule_getPictures();
+	}
+
+
 	let pageToken = '';
+	let getPictures_timeout;
+	const schedule_getPictures = () => {
+		clearInterval(getPictures_timeout);
+		getPictures_timeout = setTimeout(getPictures, SLIDESHOW_INTERVAL*1000);
+	}
 	// Make sure the client is loaded and sign-in is complete before calling this method.
 	function getPictures() {
-		const restartEvent = () => {
-			clearInterval(getPictures_timeout);
-			getPictures_timeout = setTimeout(getPictures, SLIDESHOW_INTERVAL*1000);
-		}
-
-
 		return gapi.client.photoslibrary.mediaItems.search({
 		"resource": {
 			"pageSize": 25,
@@ -69,13 +74,11 @@
 
 					pageToken = result.nextPageToken;
 					
-					const randomPhotoIndex = Math.round(Math.random() * $photos.length);
-					changeBackgroundImage(`${$photos[randomPhotoIndex].baseUrl}=w0-h0`);
-					restartEvent();
+					displayRandomPhoto();
 				},
 				function(err) { 
 					console.error("Execute error", err); 
-					restartEvent();
+					schedule_getPictures();
 				}
 			);
 	}
@@ -92,8 +95,14 @@
 	}
 </script>
 
+<style>
+	div.content {
+		width: 100%;
+		height: 100%;
+	}
+</style>
 
-<div class="content">
+<div class="content" on:click={displayRandomPhoto}>
 {#if googlePhotosClientLoaded}
 	<!-- <button on:click={getPictures}>execute</button> -->
 {:else}

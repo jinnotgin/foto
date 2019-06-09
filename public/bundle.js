@@ -1,2 +1,898 @@
-var app=function(){"use strict";function t(){}function n(t){return t()}function e(){return Object.create(null)}function o(t){t.forEach(n)}function r(t){return"function"==typeof t}function i(t,n){return t!=t?n==n:t!==n||t&&"object"==typeof t||"function"==typeof t}function a(t,n){t.appendChild(n)}function c(t,n,e){t.insertBefore(n,e||null)}function s(t){t.parentNode.removeChild(t)}function u(t){return document.createElement(t)}function l(t){return document.createTextNode(t)}function d(){return l(" ")}function g(t,n){n=""+n,t.data!==n&&(t.data=n)}let f;function p(t){f=t}function m(t){(function(){if(!f)throw new Error("Function called outside component initialization");return f})().$$.on_mount.push(t)}const h=[],$=Promise.resolve();let y=!1;const S=[],v=[],b=[];function w(t){v.push(t)}function x(){const t=new Set;do{for(;h.length;){const t=h.shift();p(t),_(t.$$)}for(;S.length;)S.shift()();for(;v.length;){const n=v.pop();t.has(n)||(n(),t.add(n))}}while(h.length);for(;b.length;)b.pop()();y=!1}function _(t){t.fragment&&(t.update(t.dirty),o(t.before_render),t.fragment.p(t.dirty,t.ctx),t.dirty=null,t.after_render.forEach(w))}function I(t,e,i){const{fragment:a,on_mount:c,on_destroy:s,after_render:u}=t.$$;a.m(e,i),w(()=>{const e=c.map(n).filter(r);s?s.push(...e):o(e),t.$$.on_mount=[]}),u.forEach(w)}function E(t,n){t.$$.dirty||(h.push(t),y||(y=!0,$.then(x)),t.$$.dirty=e()),t.$$.dirty[n]=!0}function A(n,r,i,a,c,s){const u=f;p(n);const l=r.props||{},d=n.$$={fragment:null,ctx:null,props:s,update:t,not_equal:c,bound:e(),on_mount:[],on_destroy:[],before_render:[],after_render:[],context:new Map(u?u.$$.context:[]),callbacks:e(),dirty:null};let g=!1;var m;d.ctx=i?i(n,l,(t,e)=>{d.ctx&&c(d.ctx[t],d.ctx[t]=e)&&(d.bound[t]&&d.bound[t](e),g&&E(n,t))}):l,d.update(),g=!0,o(d.before_render),d.fragment=a(d.ctx),r.target&&(r.hydrate?d.fragment.l((m=r.target,Array.from(m.childNodes))):d.fragment.c(),r.intro&&n.$$.fragment.i&&n.$$.fragment.i(),I(n,r.target,r.anchor),x()),p(u)}class P{$destroy(){var n,e;e=!0,(n=this).$$&&(o(n.$$.on_destroy),n.$$.fragment.d(e),n.$$.on_destroy=n.$$.fragment=null,n.$$.ctx={}),this.$destroy=t}$on(t,n){const e=this.$$.callbacks[t]||(this.$$.callbacks[t]=[]);return e.push(n),()=>{const t=e.indexOf(n);-1!==t&&e.splice(t,1)}}$set(){}}const C=function(n,e=t){let o;const r=[];function a(t){if(i(n,t)){if(n=t,!o)return;r.forEach(t=>t[1]()),r.forEach(t=>t[0](n))}}return{set:a,update:function(t){a(t(n))},subscribe:function(i,c=t){const s=[i,c];return r.push(s),1===r.length&&(o=e(a)||t),i(n),()=>{const t=r.indexOf(s);-1!==t&&r.splice(t,1),0===r.length&&o()}}}}([]),k={API_KEY:"AIzaSyCAr4_7aSMmQ4kLnR5cbqnCYbLdPPtw2Hw",CLIENT_ID:"273033434753-laf0qm75cehad2f7p7uuv8ppnvq6753a.apps.googleusercontent.com"};function L(t){var n,e,o,r;return{c(){var i,a,c,s;(n=u("h1")).textContent="You are not authenticated.",e=d(),(o=u("button")).textContent="authorize and load",i=o,a="click",c=t.click_handler,i.addEventListener(a,c,s),r=(()=>i.removeEventListener(a,c,s))},m(t,r){c(t,n,r),c(t,e,r),c(t,o,r)},d(t){t&&(s(n),s(e),s(o)),r()}}}function N(n){return{c:t,m:t,d:t}}function T(n){var e;function o(t){return t.googlePhotosClientLoaded?N:L}var r=o(n),i=r(n);return{c(){e=u("div"),i.c(),e.className="content"},m(t,n){c(t,e,n),i.m(e,null)},p(t,n){r!==(r=o(n))&&(i.d(1),(i=r(n))&&(i.c(),i.m(e,null)))},i:t,o:t,d(t){t&&s(e),i.d()}}}const q=30;function M(t,n,e){let o;!function(t,n,e){const o=n.subscribe(e);t.$$.on_destroy.push(o.unsubscribe?()=>o.unsubscribe():o)}(t,C,t=>{e("$photos",o=t)});let r,i=!1;function a(){return gapi.client.setApiKey(k.API_KEY),gapi.client.load("https://content.googleapis.com/discovery/v1/apis/photoslibrary/v1/rest").then(function(){e("googlePhotosClientLoaded",i=!0),console.log("GAPI client loaded for API"),s()},function(t){console.error("Error loading GAPI client for API",t)})}let c="";function s(){const t=()=>{clearInterval(r),r=setTimeout(s,1e3*q)};return gapi.client.photoslibrary.mediaItems.search({resource:{pageSize:25,pageToken:c}}).then(function(n){console.log("Response",n);const{result:e}=n;C.update(t=>Array.from(new Set([...t,...e.mediaItems]))),c=e.nextPageToken;const r=Math.round(Math.random()*o.length);!function(t){const n=new Image;n.onload=function(){document.querySelector("html").style.backgroundImage=`url(${n.src})`},n.src=t}(`${o[r].baseUrl}=w0-h0`),t()},function(n){console.error("Execute error",n),t()})}return gapi.load("client:auth2",function(){gapi.auth2.init({client_id:k.CLIENT_ID}).then(()=>{gapi.auth2.getAuthInstance().isSignedIn.get()&&a()})}),t.$$.update=((t={$photos:1})=>{t.$photos&&console.log(o)}),{googlePhotosClientLoaded:i,loadClient:a,click_handler:function(){return function(){const t=gapi.auth2.getAuthInstance();return t.isSignedIn.get()?console.log("User already signed in."):t.signIn({scope:"https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata"}).then(function(){console.log("Sign-in successful")},function(t){console.error("Error signing in",t)}),t}().then(a)}}}class D extends P{constructor(t){super(),A(this,t,M,T,i,[])}}function z(n){var e,o;return{c(){e=u("div"),o=l(n.timeString),e.className="svelte-5q5vyy"},m(t,n){c(t,e,n),a(e,o)},p(t,n){t.timeString&&g(o,n.timeString)},i:t,o:t,d(t){t&&s(e)}}}function O(t,n,e){let{timeString:o="0:00"}=n;return t.$set=(t=>{"timeString"in t&&e("timeString",o=t.timeString)}),{timeString:o}}class Y extends P{constructor(t){super(),A(this,t,O,z,i,["timeString"])}}function F(n){var e,o;return{c(){e=u("div"),o=l(n.photoSlogan),e.className="svelte-1so9xd0"},m(t,n){c(t,e,n),a(e,o)},p(t,n){t.photoSlogan&&g(o,n.photoSlogan)},i:t,o:t,d(t){t&&s(e)}}}function K(t,n,e){let{photoSlogan:o=""}=n;return t.$set=(t=>{"photoSlogan"in t&&e("photoSlogan",o=t.photoSlogan)}),{photoSlogan:o}}class j extends P{constructor(t){super(),A(this,t,K,F,i,["photoSlogan"])}}function G(t){var n,e,o,r=new Y({props:{timeString:t.timeString}}),i=new j({props:{photoSlogan:t.dateString}});return{c(){n=u("div"),r.$$.fragment.c(),e=d(),i.$$.fragment.c(),n.className="svelte-m3u4ae"},m(t,s){c(t,n,s),I(r,n,null),a(n,e),I(i,n,null),o=!0},p(t,n){var e={};t.timeString&&(e.timeString=n.timeString),r.$set(e);var o={};t.dateString&&(o.photoSlogan=n.dateString),i.$set(o)},i(t){o||(r.$$.fragment.i(t),i.$$.fragment.i(t),o=!0)},o(t){r.$$.fragment.o(t),i.$$.fragment.o(t),o=!1},d(t){t&&s(n),r.$destroy(),i.$destroy()}}}function H(t,n,e){let o=new Date;m(()=>{setInterval(()=>{e("time",o=new Date)},1e3)});let r,i;return t.$$.update=((t={time:1})=>{t.time&&e("timeString",r=(t=>{let n=t.getHours();return 0===n?n=12:n>12&&(n-=12),`${n}:${t.getMinutes().toString().padStart(2,"0")}`})(o)),t.time&&e("dateString",i=(t=>{const n=t.toDateString().split(" "),e=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],o=e.map(t=>t.substr(0,3));return`${e[o.indexOf(n[0])]}, ${n[1]} ${n[2]}`})(o))}),{timeString:r,dateString:i}}class R extends P{constructor(t){super(),A(this,t,H,G,i,[])}}function U(n){var e,o,r=new D({}),i=new R({});return{c(){r.$$.fragment.c(),e=d(),i.$$.fragment.c()},m(t,n){I(r,t,n),c(t,e,n),I(i,t,n),o=!0},p:t,i(t){o||(r.$$.fragment.i(t),i.$$.fragment.i(t),o=!0)},o(t){r.$$.fragment.o(t),i.$$.fragment.o(t),o=!1},d(t){r.$destroy(t),t&&s(e),i.$destroy(t)}}}function B(t,n,e){let{name:o}=n;return t.$set=(t=>{"name"in t&&e("name",o=t.name)}),{name:o}}return new class extends P{constructor(t){super(),A(this,t,B,U,i,["name"])}}({target:document.body,props:{name:"Foto"}})}();
+
+(function(l, i, v, e) { v = l.createElement(i); v.async = 1; v.src = '//' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; e = l.getElementsByTagName(i)[0]; e.parentNode.insertBefore(v, e)})(document, 'script');
+var app = (function () {
+    'use strict';
+
+    function noop() { }
+    function add_location(element, file, line, column, char) {
+        element.__svelte_meta = {
+            loc: { file, line, column, char }
+        };
+    }
+    function run(fn) {
+        return fn();
+    }
+    function blank_object() {
+        return Object.create(null);
+    }
+    function run_all(fns) {
+        fns.forEach(run);
+    }
+    function is_function(thing) {
+        return typeof thing === 'function';
+    }
+    function safe_not_equal(a, b) {
+        return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
+    }
+    function validate_store(store, name) {
+        if (!store || typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(component, store, callback) {
+        const unsub = store.subscribe(callback);
+        component.$$.on_destroy.push(unsub.unsubscribe
+            ? () => unsub.unsubscribe()
+            : unsub);
+    }
+
+    function append(target, node) {
+        target.appendChild(node);
+    }
+    function insert(target, node, anchor) {
+        target.insertBefore(node, anchor || null);
+    }
+    function detach(node) {
+        node.parentNode.removeChild(node);
+    }
+    function element(name) {
+        return document.createElement(name);
+    }
+    function text(data) {
+        return document.createTextNode(data);
+    }
+    function space() {
+        return text(' ');
+    }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
+    }
+    function children(element) {
+        return Array.from(element.childNodes);
+    }
+    function set_data(text, data) {
+        data = '' + data;
+        if (text.data !== data)
+            text.data = data;
+    }
+
+    let current_component;
+    function set_current_component(component) {
+        current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error(`Function called outside component initialization`);
+        return current_component;
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
+
+    const dirty_components = [];
+    const resolved_promise = Promise.resolve();
+    let update_scheduled = false;
+    const binding_callbacks = [];
+    const render_callbacks = [];
+    const flush_callbacks = [];
+    function schedule_update() {
+        if (!update_scheduled) {
+            update_scheduled = true;
+            resolved_promise.then(flush);
+        }
+    }
+    function add_render_callback(fn) {
+        render_callbacks.push(fn);
+    }
+    function flush() {
+        const seen_callbacks = new Set();
+        do {
+            // first, call beforeUpdate functions
+            // and update components
+            while (dirty_components.length) {
+                const component = dirty_components.shift();
+                set_current_component(component);
+                update(component.$$);
+            }
+            while (binding_callbacks.length)
+                binding_callbacks.shift()();
+            // then, once components are updated, call
+            // afterUpdate functions. This may cause
+            // subsequent updates...
+            while (render_callbacks.length) {
+                const callback = render_callbacks.pop();
+                if (!seen_callbacks.has(callback)) {
+                    callback();
+                    // ...so guard against infinite loops
+                    seen_callbacks.add(callback);
+                }
+            }
+        } while (dirty_components.length);
+        while (flush_callbacks.length) {
+            flush_callbacks.pop()();
+        }
+        update_scheduled = false;
+    }
+    function update($$) {
+        if ($$.fragment) {
+            $$.update($$.dirty);
+            run_all($$.before_render);
+            $$.fragment.p($$.dirty, $$.ctx);
+            $$.dirty = null;
+            $$.after_render.forEach(add_render_callback);
+        }
+    }
+    function mount_component(component, target, anchor) {
+        const { fragment, on_mount, on_destroy, after_render } = component.$$;
+        fragment.m(target, anchor);
+        // onMount happens after the initial afterUpdate. Because
+        // afterUpdate callbacks happen in reverse order (inner first)
+        // we schedule onMount callbacks before afterUpdate callbacks
+        add_render_callback(() => {
+            const new_on_destroy = on_mount.map(run).filter(is_function);
+            if (on_destroy) {
+                on_destroy.push(...new_on_destroy);
+            }
+            else {
+                // Edge case - component was destroyed immediately,
+                // most likely as a result of a binding initialising
+                run_all(new_on_destroy);
+            }
+            component.$$.on_mount = [];
+        });
+        after_render.forEach(add_render_callback);
+    }
+    function destroy(component, detaching) {
+        if (component.$$) {
+            run_all(component.$$.on_destroy);
+            component.$$.fragment.d(detaching);
+            // TODO null out other refs, including component.$$ (but need to
+            // preserve final state?)
+            component.$$.on_destroy = component.$$.fragment = null;
+            component.$$.ctx = {};
+        }
+    }
+    function make_dirty(component, key) {
+        if (!component.$$.dirty) {
+            dirty_components.push(component);
+            schedule_update();
+            component.$$.dirty = blank_object();
+        }
+        component.$$.dirty[key] = true;
+    }
+    function init(component, options, instance, create_fragment, not_equal$$1, prop_names) {
+        const parent_component = current_component;
+        set_current_component(component);
+        const props = options.props || {};
+        const $$ = component.$$ = {
+            fragment: null,
+            ctx: null,
+            // state
+            props: prop_names,
+            update: noop,
+            not_equal: not_equal$$1,
+            bound: blank_object(),
+            // lifecycle
+            on_mount: [],
+            on_destroy: [],
+            before_render: [],
+            after_render: [],
+            context: new Map(parent_component ? parent_component.$$.context : []),
+            // everything else
+            callbacks: blank_object(),
+            dirty: null
+        };
+        let ready = false;
+        $$.ctx = instance
+            ? instance(component, props, (key, value) => {
+                if ($$.ctx && not_equal$$1($$.ctx[key], $$.ctx[key] = value)) {
+                    if ($$.bound[key])
+                        $$.bound[key](value);
+                    if (ready)
+                        make_dirty(component, key);
+                }
+            })
+            : props;
+        $$.update();
+        ready = true;
+        run_all($$.before_render);
+        $$.fragment = create_fragment($$.ctx);
+        if (options.target) {
+            if (options.hydrate) {
+                $$.fragment.l(children(options.target));
+            }
+            else {
+                $$.fragment.c();
+            }
+            if (options.intro && component.$$.fragment.i)
+                component.$$.fragment.i();
+            mount_component(component, options.target, options.anchor);
+            flush();
+        }
+        set_current_component(parent_component);
+    }
+    class SvelteComponent {
+        $destroy() {
+            destroy(this, true);
+            this.$destroy = noop;
+        }
+        $on(type, callback) {
+            const callbacks = (this.$$.callbacks[type] || (this.$$.callbacks[type] = []));
+            callbacks.push(callback);
+            return () => {
+                const index = callbacks.indexOf(callback);
+                if (index !== -1)
+                    callbacks.splice(index, 1);
+            };
+        }
+        $set() {
+            // overridden by instance, if it has props
+        }
+    }
+    class SvelteComponentDev extends SvelteComponent {
+        constructor(options) {
+            if (!options || (!options.target && !options.$$inline)) {
+                throw new Error(`'target' is a required option`);
+            }
+            super();
+        }
+        $destroy() {
+            super.$destroy();
+            this.$destroy = () => {
+                console.warn(`Component was already destroyed`); // eslint-disable-line no-console
+            };
+        }
+    }
+
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = [];
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (!stop) {
+                    return; // not ready
+                }
+                subscribers.forEach((s) => s[1]());
+                subscribers.forEach((s) => s[0](value));
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.push(subscriber);
+            if (subscribers.length === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                const index = subscribers.indexOf(subscriber);
+                if (index !== -1) {
+                    subscribers.splice(index, 1);
+                }
+                if (subscribers.length === 0) {
+                    stop();
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    const photos = writable([]);
+
+    const config = {
+        'API_KEY': 'AIzaSyCAr4_7aSMmQ4kLnR5cbqnCYbLdPPtw2Hw',
+        'CLIENT_ID': '273033434753-laf0qm75cehad2f7p7uuv8ppnvq6753a.apps.googleusercontent.com',
+    };
+
+    /* src\PhotoBackground.svelte generated by Svelte v3.4.4 */
+
+    const file = "src\\PhotoBackground.svelte";
+
+    // (108:0) {:else}
+    function create_else_block(ctx) {
+    	var h1, t_1, button, dispose;
+
+    	return {
+    		c: function create() {
+    			h1 = element("h1");
+    			h1.textContent = "You are not authenticated.";
+    			t_1 = space();
+    			button = element("button");
+    			button.textContent = "authorize and load";
+    			add_location(h1, file, 108, 1, 2936);
+    			add_location(button, file, 109, 1, 2973);
+    			dispose = listen(button, "click", ctx.click_handler);
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, h1, anchor);
+    			insert(target, t_1, anchor);
+    			insert(target, button, anchor);
+    		},
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(h1);
+    				detach(t_1);
+    				detach(button);
+    			}
+
+    			dispose();
+    		}
+    	};
+    }
+
+    // (106:0) {#if googlePhotosClientLoaded}
+    function create_if_block(ctx) {
+    	return {
+    		c: noop,
+    		m: noop,
+    		d: noop
+    	};
+    }
+
+    function create_fragment(ctx) {
+    	var div, dispose;
+
+    	function select_block_type(ctx) {
+    		if (ctx.googlePhotosClientLoaded) return create_if_block;
+    		return create_else_block;
+    	}
+
+    	var current_block_type = select_block_type(ctx);
+    	var if_block = current_block_type(ctx);
+
+    	return {
+    		c: function create() {
+    			div = element("div");
+    			if_block.c();
+    			div.className = "content svelte-1p2f574";
+    			add_location(div, file, 104, 0, 2786);
+    			dispose = listen(div, "click", ctx.displayRandomPhoto);
+    		},
+
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, div, anchor);
+    			if_block.m(div, null);
+    		},
+
+    		p: function update(changed, ctx) {
+    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(div, null);
+    				}
+    			}
+    		},
+
+    		i: noop,
+    		o: noop,
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(div);
+    			}
+
+    			if_block.d();
+    			dispose();
+    		}
+    	};
+    }
+
+    const SLIDESHOW_INTERVAL = 30;
+
+    function authenticate() {
+    	const authInstance = gapi.auth2.getAuthInstance();
+
+    	if (authInstance.isSignedIn.get()) {
+    		console.log("User already signed in.");
+    	} else {
+    		authInstance.signIn({scope: "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata"})
+    		.then(function() { console.log("Sign-in successful"); },
+    			function(err) { console.error("Error signing in", err); });
+    	}
+    	return authInstance;
+    }
+
+    function changeBackgroundImage(imgUrl) {
+    	const img = new Image();
+
+    	img.onload = function() {
+    		document.querySelector('html').style.backgroundImage = `url(${img.src})`;
+    	};
+
+    	img.src = imgUrl;
+    }
+
+    function instance($$self, $$props, $$invalidate) {
+    	let $photos;
+
+    	validate_store(photos, 'photos');
+    	subscribe($$self, photos, $$value => { $photos = $$value; $$invalidate('$photos', $photos); });
+
+    	
+
+    	let googlePhotosClientLoaded = false;
+    	function loadClient() {
+    		gapi.client.setApiKey(config.API_KEY);
+    		return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/photoslibrary/v1/rest")
+    			.then(function() { 
+    				$$invalidate('googlePhotosClientLoaded', googlePhotosClientLoaded = true); 
+    				console.log("GAPI client loaded for API"); 
+
+    				getPictures();
+    			},
+    				function(err) { console.error("Error loading GAPI client for API", err); });
+    	}
+
+    	function displayRandomPhoto() {
+    		const randomPhotoIndex = Math.round(Math.random() * $photos.length);
+    		changeBackgroundImage(`${$photos[randomPhotoIndex].baseUrl}=w0-h0`);
+    		schedule_getPictures();
+    	}
+
+
+    	let pageToken = '';
+    	let getPictures_timeout;
+    	const schedule_getPictures = () => {
+    		clearInterval(getPictures_timeout);
+    		getPictures_timeout = setTimeout(getPictures, SLIDESHOW_INTERVAL*1000);
+    	};
+    	// Make sure the client is loaded and sign-in is complete before calling this method.
+    	function getPictures() {
+    		return gapi.client.photoslibrary.mediaItems.search({
+    		"resource": {
+    			"pageSize": 25,
+    			pageToken
+    		}
+    		})
+    			.then(function(response) {
+    					// Handle the results here (response.result has the parsed body).
+    					console.log("Response", response);
+    					const { result } = response;
+
+    					photos.update(n => {
+    						return Array.from(new Set([...n, ...result.mediaItems]));
+    					});
+
+    					pageToken = result.nextPageToken;
+    					
+    					displayRandomPhoto();
+    				},
+    				function(err) { 
+    					console.error("Execute error", err); 
+    					schedule_getPictures();
+    				}
+    			);
+    	}
+
+    	gapi.load("client:auth2", function() {
+    		gapi.auth2.init({client_id: config.CLIENT_ID}).then( () => {
+    			const authInstance = gapi.auth2.getAuthInstance();
+    			if (authInstance.isSignedIn.get()) loadClient();
+    		});
+    	});
+
+    	function click_handler() {
+    		return authenticate().then(loadClient);
+    	}
+
+    	$$self.$$.update = ($$dirty = { $photos: 1 }) => {
+    		if ($$dirty.$photos) { {
+    				console.log($photos);
+    			} }
+    	};
+
+    	return {
+    		googlePhotosClientLoaded,
+    		loadClient,
+    		displayRandomPhoto,
+    		click_handler
+    	};
+    }
+
+    class PhotoBackground extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance, create_fragment, safe_not_equal, []);
+    	}
+    }
+
+    /* src\Clock.svelte generated by Svelte v3.4.4 */
+
+    const file$1 = "src\\Clock.svelte";
+
+    function create_fragment$1(ctx) {
+    	var div, t;
+
+    	return {
+    		c: function create() {
+    			div = element("div");
+    			t = text(ctx.timeString);
+    			div.className = "svelte-5q5vyy";
+    			add_location(div, file$1, 13, 0, 197);
+    		},
+
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, div, anchor);
+    			append(div, t);
+    		},
+
+    		p: function update(changed, ctx) {
+    			if (changed.timeString) {
+    				set_data(t, ctx.timeString);
+    			}
+    		},
+
+    		i: noop,
+    		o: noop,
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(div);
+    			}
+    		}
+    	};
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { timeString = "0:00" } = $$props;
+
+    	const writable_props = ['timeString'];
+    	Object.keys($$props).forEach(key => {
+    		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<Clock> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$set = $$props => {
+    		if ('timeString' in $$props) $$invalidate('timeString', timeString = $$props.timeString);
+    	};
+
+    	return { timeString };
+    }
+
+    class Clock extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, ["timeString"]);
+    	}
+
+    	get timeString() {
+    		throw new Error("<Clock>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set timeString(value) {
+    		throw new Error("<Clock>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\PhotoSlogan.svelte generated by Svelte v3.4.4 */
+
+    const file$2 = "src\\PhotoSlogan.svelte";
+
+    function create_fragment$2(ctx) {
+    	var div, t;
+
+    	return {
+    		c: function create() {
+    			div = element("div");
+    			t = text(ctx.photoSlogan);
+    			div.className = "svelte-1so9xd0";
+    			add_location(div, file$2, 14, 0, 219);
+    		},
+
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, div, anchor);
+    			append(div, t);
+    		},
+
+    		p: function update(changed, ctx) {
+    			if (changed.photoSlogan) {
+    				set_data(t, ctx.photoSlogan);
+    			}
+    		},
+
+    		i: noop,
+    		o: noop,
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(div);
+    			}
+    		}
+    	};
+    }
+
+    function instance$2($$self, $$props, $$invalidate) {
+    	let { photoSlogan = "" } = $$props;
+
+    	const writable_props = ['photoSlogan'];
+    	Object.keys($$props).forEach(key => {
+    		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<PhotoSlogan> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$set = $$props => {
+    		if ('photoSlogan' in $$props) $$invalidate('photoSlogan', photoSlogan = $$props.photoSlogan);
+    	};
+
+    	return { photoSlogan };
+    }
+
+    class PhotoSlogan extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, ["photoSlogan"]);
+    	}
+
+    	get photoSlogan() {
+    		throw new Error("<PhotoSlogan>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set photoSlogan(value) {
+    		throw new Error("<PhotoSlogan>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\BottomBar.svelte generated by Svelte v3.4.4 */
+
+    const file$3 = "src\\BottomBar.svelte";
+
+    function create_fragment$3(ctx) {
+    	var div, t, current;
+
+    	var clock = new Clock({
+    		props: { timeString: ctx.timeString },
+    		$$inline: true
+    	});
+
+    	var photoslogan = new PhotoSlogan({
+    		props: { photoSlogan: ctx.dateString },
+    		$$inline: true
+    	});
+
+    	return {
+    		c: function create() {
+    			div = element("div");
+    			clock.$$.fragment.c();
+    			t = space();
+    			photoslogan.$$.fragment.c();
+    			div.className = "svelte-m3u4ae";
+    			add_location(div, file$3, 57, 0, 1572);
+    		},
+
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+
+    		m: function mount(target, anchor) {
+    			insert(target, div, anchor);
+    			mount_component(clock, div, null);
+    			append(div, t);
+    			mount_component(photoslogan, div, null);
+    			current = true;
+    		},
+
+    		p: function update(changed, ctx) {
+    			var clock_changes = {};
+    			if (changed.timeString) clock_changes.timeString = ctx.timeString;
+    			clock.$set(clock_changes);
+
+    			var photoslogan_changes = {};
+    			if (changed.dateString) photoslogan_changes.photoSlogan = ctx.dateString;
+    			photoslogan.$set(photoslogan_changes);
+    		},
+
+    		i: function intro(local) {
+    			if (current) return;
+    			clock.$$.fragment.i(local);
+
+    			photoslogan.$$.fragment.i(local);
+
+    			current = true;
+    		},
+
+    		o: function outro(local) {
+    			clock.$$.fragment.o(local);
+    			photoslogan.$$.fragment.o(local);
+    			current = false;
+    		},
+
+    		d: function destroy(detaching) {
+    			if (detaching) {
+    				detach(div);
+    			}
+
+    			clock.$destroy();
+
+    			photoslogan.$destroy();
+    		}
+    	};
+    }
+
+    function instance$3($$self, $$props, $$invalidate) {
+    	
+    	let time = new Date();
+
+    	onMount(() => {
+    		const interval = setInterval(() => {
+    			$$invalidate('time', time = new Date());
+            }, 1000);
+        });
+
+        const timeStringFormatter = (timeObj) => {
+            let hoursFormatted = timeObj.getHours();
+            if (hoursFormatted === 0) hoursFormatted = 12;
+            else if (hoursFormatted > 12) hoursFormatted = hoursFormatted - 12;
+
+            let minutesFormatted = timeObj.getMinutes().toString().padStart(2, '0');
+
+            return `${hoursFormatted}:${minutesFormatted}`;
+        };
+
+        const dateStringFormatter = (timeObj) => {
+
+            const dateStrings = timeObj.toDateString().split(' ');
+
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const days_short = days.map( item => item.substr(0,3));
+
+            const day = days[days_short.indexOf(dateStrings[0])];
+            const month = dateStrings[1];
+            const date =  dateStrings[2];
+            return `${day}, ${month} ${date}`;
+        };
+
+    	let timeString, dateString;
+
+    	$$self.$$.update = ($$dirty = { time: 1 }) => {
+    		if ($$dirty.time) { $$invalidate('timeString', timeString = timeStringFormatter(time)); }
+    		if ($$dirty.time) { $$invalidate('dateString', dateString = dateStringFormatter(time)); }
+    	};
+
+    	return { timeString, dateString };
+    }
+
+    class BottomBar extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, []);
+    	}
+    }
+
+    /* src\App.svelte generated by Svelte v3.4.4 */
+
+    function create_fragment$4(ctx) {
+    	var t, current;
+
+    	var photobackground = new PhotoBackground({ $$inline: true });
+
+    	var bottombar = new BottomBar({ $$inline: true });
+
+    	return {
+    		c: function create() {
+    			photobackground.$$.fragment.c();
+    			t = space();
+    			bottombar.$$.fragment.c();
+    		},
+
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+
+    		m: function mount(target, anchor) {
+    			mount_component(photobackground, target, anchor);
+    			insert(target, t, anchor);
+    			mount_component(bottombar, target, anchor);
+    			current = true;
+    		},
+
+    		p: noop,
+
+    		i: function intro(local) {
+    			if (current) return;
+    			photobackground.$$.fragment.i(local);
+
+    			bottombar.$$.fragment.i(local);
+
+    			current = true;
+    		},
+
+    		o: function outro(local) {
+    			photobackground.$$.fragment.o(local);
+    			bottombar.$$.fragment.o(local);
+    			current = false;
+    		},
+
+    		d: function destroy(detaching) {
+    			photobackground.$destroy(detaching);
+
+    			if (detaching) {
+    				detach(t);
+    			}
+
+    			bottombar.$destroy(detaching);
+    		}
+    	};
+    }
+
+    function instance$4($$self, $$props, $$invalidate) {
+    	
+
+    	let { name } = $$props;
+
+    	const writable_props = ['name'];
+    	Object.keys($$props).forEach(key => {
+    		if (!writable_props.includes(key) && !key.startsWith('$$')) console.warn(`<App> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$set = $$props => {
+    		if ('name' in $$props) $$invalidate('name', name = $$props.name);
+    	};
+
+    	return { name };
+    }
+
+    class App extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, ["name"]);
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+    		if (ctx.name === undefined && !('name' in props)) {
+    			console.warn("<App> was created without expected prop 'name'");
+    		}
+    	}
+
+    	get name() {
+    		throw new Error("<App>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set name(value) {
+    		throw new Error("<App>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    const app = new App({
+    	target: document.body,
+    	props: {
+    		name: 'Foto'
+    	}
+    });
+
+    return app;
+
+}());
 //# sourceMappingURL=bundle.js.map
