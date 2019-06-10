@@ -318,8 +318,8 @@ var app = (function () {
     			t_1 = space();
     			button = element("button");
     			button.textContent = "authorize and load";
-    			add_location(h1, file, 124, 1, 3473);
-    			add_location(button, file, 125, 1, 3510);
+    			add_location(h1, file, 124, 1, 3525);
+    			add_location(button, file, 125, 1, 3562);
     			dispose = listen(button, "click", ctx.click_handler);
     		},
 
@@ -367,7 +367,11 @@ var app = (function () {
     			if_block.c();
     			div.className = "content svelte-1p2f574";
     			add_location(div, file, 120, 0, 3323);
-    			dispose = listen(div, "click", ctx.displayRandomPhoto);
+
+    			dispose = [
+    				listen(div, "click", ctx.displayRandomPhoto),
+    				listen(div, "dblclick", ctx.dblclick_handler)
+    			];
     		},
 
     		l: function claim(nodes) {
@@ -399,7 +403,7 @@ var app = (function () {
     			}
 
     			if_block.d();
-    			dispose();
+    			run_all(dispose);
     		}
     	};
     }
@@ -518,6 +522,10 @@ var app = (function () {
     		return authenticate().then(loadClient);
     	}
 
+    	function dblclick_handler() {
+    		return document.body.requestFullscreen();
+    	}
+
     	$$self.$$.update = ($$dirty = { $photos: 1 }) => {
     		if ($$dirty.$photos) { {
     				console.log({$photos});
@@ -528,7 +536,9 @@ var app = (function () {
     		googlePhotosClientLoaded,
     		loadClient,
     		displayRandomPhoto,
-    		click_handler
+    		document,
+    		click_handler,
+    		dblclick_handler
     	};
     }
 
