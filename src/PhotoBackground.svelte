@@ -118,7 +118,7 @@
 	}
 </style>
 
-<div class="content" on:click={displayRandomPhoto} on:dblclick={()=>document.body.requestFullscreen()}>
+<div class="content" on:click={displayRandomPhoto} on:dblclick={()=>document.body.requestFullscreen()} on:taphold={()=>document.body.requestFullscreen()}>
 {#if googlePhotosClientLoaded}
 	<!-- <button on:click={getPictures}>execute</button> -->
 {:else}
