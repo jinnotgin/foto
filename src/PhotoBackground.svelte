@@ -83,7 +83,17 @@
 					console.log("Increasing photos cache", response);
 					const { result } = response;
 
-					const newPhotoIds = result.mediaItems.map(item => item.id);
+					const newPhotoIds = result.mediaItems.filter(item => {
+						const validPhotoTest = [
+							item.mimeType.includes('image/'),
+							(item.filename.toLowerCase().includes("screenshot") === false),
+							// check if metadata exists (disabled for now)
+							// (Object.keys(item.mediaMetadata.photo).length > 0),
+						];
+
+						return validPhotoTest.every(item => item === true);
+					}).map(item => item.id);
+
 					photos.update(n => {
 						return Array.from(new Set([...n, ...newPhotoIds]));
 					});
