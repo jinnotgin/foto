@@ -4,6 +4,9 @@
 	import BottomBar from './BottomBar.svelte';
 
 	export let name;
+	export let version;
+
+	console.log(`Starting ${name} v${version}...`)	
 </script>
 
 
