@@ -1,9 +1,12 @@
 <script>
 	import { fade } from 'svelte/transition';
-	import { photos } from './stores.js';
 	import { config } from  './config.js';
 
 	const SLIDESHOW_INTERVAL = 30;
+	const GETNEWPHOTOS_INTERVAL = 60;
+
+	export let db;
+	console.log({db});
 
 	function authenticate() {
 		const authInstance = gapi.auth2.getAuthInstance();
@@ -26,8 +29,9 @@
 			.then(function() { 
 				googlePhotosClientLoaded = true; 
 				console.log("GAPI client loaded for API"); 
-
-				getPictures();
+				
+	 			schedule_displayRandomPhoto(0);
+				schedule_getPictures(0);
 			},
 				function(err) { console.error("Error loading GAPI client for API", err); });
 	}
@@ -43,70 +47,95 @@
 		img.src = imgUrl;
 	}
 
-	function displayRandomPhoto() {
-		const randomPhotoIndex = Math.round(Math.random() * $photos.length);
+	const timeouts = {};
+	const timeoutHandler = (desiredItem, desiredCommand, desiredCommandParameter) => {
+		//console.log('timeoutHandler:', {desiredItem, desiredCommand, desiredCommandParameter});
+		const commands = {
+			'schedule': () => {
+				clearInterval(timeouts[desiredItem]);
+				timeouts[desiredItem] = setTimeout(desiredCommandParameter.function, desiredCommandParameter.timeout);
+			},
+		}
+		
+		// create new timeout item if necessary
+		if (Object.keys(timeouts).includes(desiredItem) === false) timeouts[desiredItem] = false;
+
+		// run command
+		commands[desiredCommand]();
+	}
+
+	const scheduleFunction = (functionName, functionObj, scheduleSeconds) => {
+		console.log('scheduleFunction:', {functionName, scheduleSeconds});
+		timeoutHandler(functionName, 'schedule', {
+			'function': functionObj,
+			'timeout': scheduleSeconds * 1000,
+		});
+	}
+
+	const schedule_displayRandomPhoto = (scheduleSeconds = SLIDESHOW_INTERVAL) => scheduleFunction('displayRandomPhoto', displayRandomPhoto, scheduleSeconds);
+	async function displayRandomPhoto() {
+		const totalNoOfPhotos = await db.photos.count();
+		const randomPhotoIndex = Math.round(Math.random() * totalNoOfPhotos);
+		const randomPhotoItem = await db.photos.offset(randomPhotoIndex).limit(1).first();
+		const randomPhotoId = randomPhotoItem.id;
+		console.log('displayRandomPhoto:', {totalNoOfPhotos, randomPhotoIndex, randomPhotoItem, randomPhotoId});
 
 		return gapi.client.photoslibrary.mediaItems.get({
-      		"mediaItemId": $photos[randomPhotoIndex],
+      		"mediaItemId": randomPhotoId,
     	})
         .then(
 			function(response) {
 				// Handle the results here (response.result has the parsed body).
-				console.log("Getting photo URL", response);
+				console.log("Recevied photo data from Google:", response);
 				changeBackgroundImage(`${response.result.baseUrl}=w0-h0`);
-				schedule_getPictures();
+				schedule_displayRandomPhoto();
 			},
 			function(err) {
 				console.error("Execute error", err); 
-				schedule_getPictures();
+				schedule_displayRandomPhoto(0);
 			}
 		);
- 	}
+	 }
 
 
 	let pageToken = '';
-	let getPictures_timeout;
-	const schedule_getPictures = () => {
-		clearInterval(getPictures_timeout);
-		getPictures_timeout = setTimeout(getPictures, SLIDESHOW_INTERVAL*1000);
-	}
+	const schedule_getPictures = (scheduleSeconds = GETNEWPHOTOS_INTERVAL) => scheduleFunction('getPictures', getPictures, scheduleSeconds);
 	// Make sure the client is loaded and sign-in is complete before calling this method.
 	function getPictures() {
 		return gapi.client.photoslibrary.mediaItems.search({
-		"resource": {
-			"pageSize": 100,
-			pageToken
-		}
-		})
-			.then(function(response) {
-					// Handle the results here (response.result has the parsed body).
-					console.log("Increasing photos cache", response);
-					const { result } = response;
+			"resource": {
+				"pageSize": 100,
+				pageToken
+			},
+		}).then(async function(response) {
+			// Handle the results here (response.result has the parsed body).
+			console.log("getPictures: ", response);
+			const { result } = response;
 
-					const newPhotoIds = result.mediaItems.filter(item => {
-						const validPhotoTest = [
-							item.mimeType.includes('image/'),
-							(item.filename.toLowerCase().includes("screenshot") === false),
-							// check if metadata exists (disabled for now)
-							// (Object.keys(item.mediaMetadata.photo).length > 0),
-						];
+			const newPhotoIds = result.mediaItems.filter(item => {
+				const validPhotoTest = [
+					item.mimeType.includes('image/'),
+					(item.filename.toLowerCase().includes("screenshot") === false),
+					// check if metadata exists (disabled for now)
+					// (Object.keys(item.mediaMetadata.photo).length > 0),
+				];
 
-						return validPhotoTest.every(item => item === true);
-					}).map(item => item.id);
+				return validPhotoTest.every(item => item === true);
+			}).map(item => item.id);
 
-					photos.update(n => {
-						return Array.from(new Set([...n, ...newPhotoIds]));
-					});
+			const nowTime = Math.round((new Date).getTime() / 1000);
+			await db.photos.bulkPut(newPhotoIds.map(item => { 
+				return {'id': item, 'modified': nowTime};
+			})).catch((err) => {
+				console.error("Dexie error", err); 
+			});;
 
-					pageToken = result.nextPageToken;
-					
-					displayRandomPhoto();
-				},
-				function(err) { 
-					console.error("Execute error", err); 
-					schedule_getPictures();
-				}
-			);
+			pageToken = result.nextPageToken;
+			schedule_getPictures();
+		}, function(err) { 
+			console.error("Execute error", err); 
+			schedule_getPictures();
+		});
 	}
 
 	gapi.load("client:auth2", function() {
@@ -115,10 +144,6 @@
 			if (authInstance.isSignedIn.get()) loadClient();
 		});
 	});
-	
-	$: {
-		console.log({$photos});
-	}
 </script>
 
 <style>
@@ -128,7 +153,7 @@
 	}
 </style>
 
-<div class="content" on:click={displayRandomPhoto} on:dblclick={()=>document.body.requestFullscreen()} on:taphold={()=>document.body.requestFullscreen()}>
+<div class="content" on:click={() => schedule_displayRandomPhoto(0)} on:dblclick={()=>document.body.requestFullscreen()} on:taphold={()=>document.body.requestFullscreen()}>
 {#if googlePhotosClientLoaded}
 	<!-- <button on:click={getPictures}>execute</button> -->
 {:else}
