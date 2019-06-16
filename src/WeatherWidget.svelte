@@ -32,6 +32,41 @@
         }).catch(error => false);
     }
 
+    const getWeatherIcon = (weatherDescription) => {
+        const workingInput = weatherDescription.toLowerCase();
+
+        const testConditions = {
+            'partly cloudy night': 'partly_cloudy_night',
+            'partly cloudy': 'partly_cloudy',
+            'shower night': 'scattered_showers_night',
+            'shower': 'scattered_showers',
+            'partly cloudy night': 'partly_cloudy_night',
+            'partly cloudy': 'partly_cloudy',
+            'cloudy night': 'mostly_cloudy_night',
+            'cloudy': 'mostly_cloudy_day',
+            'mostly sunny': 'mostly_sunny',
+            'sunny': 'sunny_',
+            'mostly clear night': 'mostly_clear_night',
+            'clear night': 'clear_night',
+            'isolated thunderstorm night': 'isolated_scattered_tstorms_night',
+            'isolated thunderstorm': 'isolated_scattered_tstorms_day',
+            'thunderstorm': 'strong_tstorms',
+            'heavy rain': 'heavy_rain',
+            'rain': 'showers_rain',
+            'shower night': 'scattered_showers_night',
+            'shower ': 'scattered_showers_day',
+        };
+
+        return Object.entries(testConditions).reduce( (acc, [keyWords, weatherIconPrefix]) => {
+            if (acc === false) {
+                const matched = keyWords.split(' ').every( word => workingInput.includes(word) );
+
+                acc = matched ? `/weather/${weatherIconPrefix}_light_color_96dp.png` : false;
+            }
+            return acc;
+        }, false)
+    }
+
     const schedule_getWeatherData = (scheduleSeconds = WEATHERINFO_INTERVAL) => scheduleFunction('getWeatherData', getWeatherData, scheduleSeconds);
     const getWeatherData = async (cords = userCoordinates) => {
         const {latitude, longitude, accuracy} = cords;
@@ -126,35 +161,58 @@
                 weatherData = await weather_sg();
             }
         }
+
+        // add icon
+        weatherData['forecastIcon'] = getWeatherIcon(weatherData.forecast);
+
         schedule_getWeatherData();
+
+        weather = weatherData;
         return weatherData;
     }
     
     
     onMount(() => {
-        getLocation().then( async (data) => {
-            const {coords} = data;
-            userCoordinates = coords;
-            
-            console.log({coords});
-            
-            weather = await getWeatherData(coords);
-            console.log({weather});
-        });
+        if (window.location.search === '?locationWoodlands') {
+            console.log('Overwriting user location to Woodlands, Singapore...')
+            userCoordinates = {
+                'accuracy': 20,
+                'latitude': 1.4310824,
+                'longitude': 103.77629639999999,
+            }
+            getWeatherData();
+        } else {
+            getLocation().then( async (data) => {
+                const {coords} = data;
+                userCoordinates = coords;
+                console.log({coords});
+                
+                getWeatherData();
+            });
+        }
     });
 </script>
 
 
 <style>
 div {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     line-height: 1em;
     margin-left: 1.5rem;
     margin-right: 2rem;
     text-shadow: 1px 1px 2px black;
 }
+
+img.weatherIcon {
+    height: 1em;
+    width: auto;
+    margin-bottom: -0.15em;
+}
 </style>
 
 <div>
-    {isNaN(weather.temp) ? '-' : `${Math.round(weather.temp)}°`}
+    {#if weather.forecastIcon}
+        <img class="weatherIcon" src={weather.forecastIcon} alt={weather.forecast} />
+    {/if}
+    {isNaN(weather.temp) ? '' : `${Math.round(weather.temp)}°`}
 </div>

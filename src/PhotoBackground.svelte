@@ -1,7 +1,8 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import { config } from  './config.js';
-    import { scheduleFunction } from  './jinFunctions.js';
+	import { scheduleFunction } from  './jinFunctions.js';
+	import { userProfile, currentPhoto } from './stores';
 
 	const SLIDESHOW_INTERVAL = 30;
 	const GETNEWPHOTOS_INTERVAL = 60;
@@ -23,13 +24,36 @@
 		return authInstance;
 	}
 
+	const getUserProfile = () => {
+		const authInstance = gapi.auth2.getAuthInstance();
+		if (authInstance.isSignedIn.get()) {
+			var profile = authInstance.currentUser.get().getBasicProfile();
+
+			userProfile.set({
+				'name': profile.getName(),
+				'image': profile.getImageUrl(),
+			});
+			/*
+			console.log('Full Name: ' + profile.getName());
+			console.log('Given Name: ' + profile.getGivenName());
+			console.log('Family Name: ' + profile.getFamilyName());
+			console.log('Image URL: ' + profile.getImageUrl());
+			console.log('ID: ' + profile.getId());
+			console.log('Email: ' + profile.getEmail());
+			*/
+		}
+	}
+
 	let googlePhotosClientLoaded = false;
 	function loadClient() {
+		// get user profile first
+		getUserProfile();
+
 		gapi.client.setApiKey(config.API_KEY);
 		return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/photoslibrary/v1/rest")
 			.then(function() { 
 				googlePhotosClientLoaded = true; 
-				console.log("GAPI client loaded for API"); 
+				console.log("GAPI client loaded, starting up photos functionality..."); 
 				
 				clearOldPhotos();
 	 			schedule_displayRandomPhoto(0);
@@ -76,7 +100,9 @@
 			function(response) {
 				// Handle the results here (response.result has the parsed body).
 				console.log("Photo data (Google):", response);
-				changeBackgroundImage(`${response.result.baseUrl}=w0-h0`);
+				currentPhoto.set(response.result);
+				
+				changeBackgroundImage(`${$currentPhoto.baseUrl}=w0-h0`);
 				schedule_displayRandomPhoto();
 			},
 			function(err) {
@@ -130,7 +156,10 @@
 	gapi.load("client:auth2", function() {
 		gapi.auth2.init({client_id: config.CLIENT_ID}).then( () => {
 			const authInstance = gapi.auth2.getAuthInstance();
-			if (authInstance.isSignedIn.get()) loadClient();
+			if (authInstance.isSignedIn.get()) {
+				console.log("User already signed in.");
+				loadClient();
+			}
 		});
 	});
 </script>
