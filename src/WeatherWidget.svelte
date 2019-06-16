@@ -61,7 +61,7 @@
             if (acc === false) {
                 const matched = keyWords.split(' ').every( word => workingInput.includes(word) );
 
-                acc = matched ? `/weather/${weatherIconPrefix}_light_color_96dp.png` : false;
+                acc = matched ? `weather/${weatherIconPrefix}_light_color_96dp.png` : false;
             }
             return acc;
         }, false)
