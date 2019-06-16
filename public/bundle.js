@@ -255,7 +255,7 @@ var app = (function () {
 
     const file = "src\\PhotoBackground.svelte";
 
-    // (159:0) {:else}
+    // (171:0) {:else}
     function create_else_block(ctx) {
     	var h1, t_1, button, dispose;
 
@@ -266,8 +266,8 @@ var app = (function () {
     			t_1 = space();
     			button = element("button");
     			button.textContent = "authorize and load";
-    			add_location(h1, file, 159, 1, 5365);
-    			add_location(button, file, 160, 1, 5402);
+    			add_location(h1, file, 171, 1, 6008);
+    			add_location(button, file, 172, 1, 6045);
     			dispose = listen(button, "click", ctx.click_handler);
     		},
 
@@ -289,7 +289,7 @@ var app = (function () {
     	};
     }
 
-    // (157:0) {#if googlePhotosClientLoaded}
+    // (169:0) {#if googlePhotosClientLoaded}
     function create_if_block(ctx) {
     	return {
     		c: noop,
@@ -314,7 +314,7 @@ var app = (function () {
     			div = element("div");
     			if_block.c();
     			div.className = "content svelte-1p2f574";
-    			add_location(div, file, 155, 0, 5094);
+    			add_location(div, file, 167, 0, 5737);
 
     			dispose = [
     				listen(div, "click", ctx.click_handler_1),
@@ -399,6 +399,7 @@ var app = (function () {
     				$$invalidate('googlePhotosClientLoaded', googlePhotosClientLoaded = true); 
     				console.log("GAPI client loaded for API"); 
     				
+    				clearOldPhotos();
     	 			schedule_displayRandomPhoto(0);
     				schedule_getPictures(0);
     			},
@@ -429,6 +430,16 @@ var app = (function () {
     		});
     	};
 
+    	async function clearOldPhotos() {
+    		const newlyUpdatedPhotos = await db.photos.orderBy('modified').reverse().limit(100).toArray();
+    		const averageModifiedTime = newlyUpdatedPhotos.reduce((accumulator, item) => accumulator + item.modified, 0) / newlyUpdatedPhotos.length;
+    		const inactiveTolerance = 60 * 60 * 24 * 7;
+    		console.log('clearOldPhotos:', {newlyUpdatedPhotos, averageModifiedTime, inactiveTolerance});
+
+    		const thresholdTime = averageModifiedTime - inactiveTolerance;
+    		const deleteTransaction = await db.photos.where('modified').below(thresholdTime).delete();
+    		console.log('clearOldPhotos:', {deleteTransaction});
+    	}
     	const schedule_displayRandomPhoto = (scheduleSeconds = SLIDESHOW_INTERVAL) => scheduleFunction('displayRandomPhoto', displayRandomPhoto, scheduleSeconds);
     	async function displayRandomPhoto() {
     		const totalNoOfPhotos = await db.photos.count();
@@ -443,7 +454,7 @@ var app = (function () {
             .then(
     			function(response) {
     				// Handle the results here (response.result has the parsed body).
-    				console.log("Recevied photo data from Google:", response);
+    				console.log("Photo data (Google):", response);
     				changeBackgroundImage(`${response.result.baseUrl}=w0-h0`);
     				schedule_displayRandomPhoto();
     			},
@@ -900,9 +911,8 @@ var app = (function () {
     	
     	let { db } = $$props;
     	$$invalidate('db', db = new Dexie("fotoDatabase"));
-    	db.version(1).stores({
-    		photos: 'id'
-    	});
+    	db.version(1).stores({photos: 'id'});
+    	db.version(2).stores({photos: 'id, modified'});
 
     	const writable_props = ['name', 'version', 'db'];
     	Object.keys($$props).forEach(key => {
@@ -965,7 +975,7 @@ var app = (function () {
     	target: document.body,
     	props: {
     		name: 'Foto',
-    		version: `0.2`,
+    		version: `0.21`,
     	}
     });
 

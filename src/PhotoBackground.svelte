@@ -30,6 +30,7 @@
 				googlePhotosClientLoaded = true; 
 				console.log("GAPI client loaded for API"); 
 				
+				clearOldPhotos();
 	 			schedule_displayRandomPhoto(0);
 				schedule_getPictures(0);
 			},
@@ -72,6 +73,17 @@
 		});
 	}
 
+	async function clearOldPhotos() {
+		const newlyUpdatedPhotos = await db.photos.orderBy('modified').reverse().limit(100).toArray();
+		const averageModifiedTime = newlyUpdatedPhotos.reduce((accumulator, item) => accumulator + item.modified, 0) / newlyUpdatedPhotos.length
+		const inactiveTolerance = 60 * 60 * 24 * 7;
+		console.log('clearOldPhotos:', {newlyUpdatedPhotos, averageModifiedTime, inactiveTolerance});
+
+		const thresholdTime = averageModifiedTime - inactiveTolerance;
+		const deleteTransaction = await db.photos.where('modified').below(thresholdTime).delete();
+		console.log('clearOldPhotos:', {deleteTransaction});
+	};	
+
 	const schedule_displayRandomPhoto = (scheduleSeconds = SLIDESHOW_INTERVAL) => scheduleFunction('displayRandomPhoto', displayRandomPhoto, scheduleSeconds);
 	async function displayRandomPhoto() {
 		const totalNoOfPhotos = await db.photos.count();
@@ -86,7 +98,7 @@
         .then(
 			function(response) {
 				// Handle the results here (response.result has the parsed body).
-				console.log("Recevied photo data from Google:", response);
+				console.log("Photo data (Google):", response);
 				changeBackgroundImage(`${response.result.baseUrl}=w0-h0`);
 				schedule_displayRandomPhoto();
 			},

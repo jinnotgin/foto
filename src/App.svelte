@@ -10,9 +10,8 @@
 	
 	export let db;
 	db = new Dexie("fotoDatabase");
-	db.version(1).stores({
-		photos: 'id'
-	});
+	db.version(1).stores({photos: 'id'});
+	db.version(2).stores({photos: 'id, modified'});
 </script>
 
 
