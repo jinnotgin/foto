@@ -5,7 +5,7 @@
 <style>
 div {
     margin-left: auto;
-    font-size: 2rem;
+    font-size: 1.5rem;
     line-height: 1em;
     margin-right: 2rem;
     text-shadow: 1px 1px 2px black;

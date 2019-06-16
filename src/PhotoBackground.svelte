@@ -1,6 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import { config } from  './config.js';
+    import { scheduleFunction } from  './jinFunctions.js';
 
 	const SLIDESHOW_INTERVAL = 30;
 	const GETNEWPHOTOS_INTERVAL = 60;
@@ -48,30 +49,6 @@
 		img.src = imgUrl;
 	}
 
-	const timeouts = {};
-	const timeoutHandler = (desiredItem, desiredCommand, desiredCommandParameter) => {
-		//console.log('timeoutHandler:', {desiredItem, desiredCommand, desiredCommandParameter});
-		const commands = {
-			'schedule': () => {
-				clearInterval(timeouts[desiredItem]);
-				timeouts[desiredItem] = setTimeout(desiredCommandParameter.function, desiredCommandParameter.timeout);
-			},
-		}
-		
-		// create new timeout item if necessary
-		if (Object.keys(timeouts).includes(desiredItem) === false) timeouts[desiredItem] = false;
-
-		// run command
-		commands[desiredCommand]();
-	}
-
-	const scheduleFunction = (functionName, functionObj, scheduleSeconds) => {
-		console.log('scheduleFunction:', {functionName, scheduleSeconds});
-		timeoutHandler(functionName, 'schedule', {
-			'function': functionObj,
-			'timeout': scheduleSeconds * 1000,
-		});
-	}
 
 	async function clearOldPhotos() {
 		const newlyUpdatedPhotos = await db.photos.orderBy('modified').reverse().limit(100).toArray();

@@ -4,7 +4,7 @@ const app = new App({
 	target: document.body,
 	props: {
 		name: 'Foto',
-		version: `0.21`,
+		version: `0.25`,
 	}
 });
 

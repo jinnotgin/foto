@@ -1,6 +1,7 @@
 <script>
     import Clock from './Clock.svelte';
     import PhotoSlogan from './PhotoSlogan.svelte';
+	import WeatherWidget from './WeatherWidget.svelte';
     
 	import { onMount } from 'svelte';
 	let time = new Date();
@@ -57,5 +58,6 @@ div {
 
 <div>
     <Clock {timeString} />
+    <WeatherWidget />
     <PhotoSlogan photoSlogan={dateString} />
 </div>
