@@ -3,7 +3,7 @@
     import { config } from  './config.js';
     import { jFetch, scheduleFunction } from  './jinFunctions.js';
     
-    const WEATHERINFO_INTERVAL = 60 * 60 * 10;
+    const WEATHERINFO_INTERVAL = 60 * 10;
     let weather = {
         'country': '',
         'temp': 0,
