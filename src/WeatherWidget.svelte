@@ -39,7 +39,7 @@
             'partly cloudy night': 'partly_cloudy_night',
             'partly cloudy': 'partly_cloudy',
             'shower night': 'scattered_showers_night',
-            'shower': 'scattered_showers',
+            'shower': 'scattered_showers_day',
             'partly cloudy night': 'partly_cloudy_night',
             'partly cloudy': 'partly_cloudy',
             'cloudy night': 'mostly_cloudy_night',
