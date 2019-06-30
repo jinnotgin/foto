@@ -1,9 +1,12 @@
 # foto
 
-A digital photo frame that displays your pictures from Google Photos, using the Google Photos API.
+A digital photo frame that displays pictures from your Google Photos account!
 
-This is a webapp built using Svelte 3.
+![UI of Foto, with a backdrop of the Peace Bridge, Calgary](https://i.imgur.com/rKXiEja.jpg)
 
-(Todo: Weather widget)
+Try it out here: https://jinnotgin.github.io/foto/.
 
-Inspired by Digital Frame on the Google Nest Hub.
+
+This is a webapp built using Svelte 3, IndexedDB and the Google Photos API. 
+
+*Inspired by Digital Frame on the Google Nest Hub.*
