@@ -38,6 +38,8 @@
         const testConditions = {
             'partly cloudy night': 'partly_cloudy_night',
             'partly cloudy': 'partly_cloudy',
+            'thundery shower night': 'isolated_scattered_tstorms_night',
+            'thundery shower': 'isolated_scattered_tstorms_day',
             'shower night': 'scattered_showers_night',
             'shower': 'scattered_showers_day',
             'partly cloudy night': 'partly_cloudy_night',
@@ -53,8 +55,6 @@
             'thunderstorm': 'strong_tstorms',
             'heavy rain': 'heavy_rain',
             'rain': 'showers_rain',
-            'shower night': 'scattered_showers_night',
-            'shower ': 'scattered_showers_day',
         };
 
         return Object.entries(testConditions).reduce( (acc, [keyWords, weatherIconPrefix]) => {
